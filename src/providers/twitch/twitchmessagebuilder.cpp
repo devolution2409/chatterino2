@@ -426,6 +426,9 @@ void TwitchMessageBuilder::parseHighlights()
     QStringList blackList =
         app->settings->highlightUserBlacklist.getValue().split("\n", QString::SkipEmptyParts);
 
+    QStringList pingList =
+        app->settings->pingUserslist.getValue().split("\n", QString::SkipEmptyParts);
+
     // TODO: This vector should only be rebuilt upon highlights being changed
     // fourtf: should be implemented in the HighlightsController
     std::vector<controllers::highlights::HighlightPhrase> activeHighlights =
@@ -446,9 +449,15 @@ void TwitchMessageBuilder::parseHighlights()
 
     if (!blackList.contains(this->ircMessage->nick(), Qt::CaseInsensitive)) {
         for (const controllers::highlights::HighlightPhrase &highlight : activeHighlights) {
-            if (highlight.isMatch(this->originalMessage)) {
-                debug::Log("Highlight because {} matches {}", this->originalMessage,
-                           highlight.getPattern());
+            if (highlight.isMatch(this->originalMessage) ||
+                pingList.contains(this->ircMessage->nick(), Qt::CaseInsensitive)) {
+                if (highlight.isMatch(this->originalMessage)) {
+                    debug::Log("Highlight because {} matches {}", this->originalMessage,
+                               highlight.getPattern());
+                } else {
+                    debug::Log("Highlight because user {} wrote a message",
+                               this->ircMessage->nick());
+                }
                 doHighlight = true;
 
                 if (highlight.getAlert()) {

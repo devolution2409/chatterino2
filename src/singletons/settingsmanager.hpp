@@ -113,6 +113,8 @@ public:
                                          "qrc:/sounds/ping2.wav"};
     QStringSetting highlightUserBlacklist = {"/highlighting/blacklistedUsers", ""};
 
+    QStringSetting pingUserslist = {"/highlighting/pingUsers", ""};
+
     BoolSetting highlightAlwaysPlaySound = {"/highlighting/alwaysPlaySound", false};
 
     BoolSetting inlineWhispers = {"/whispers/enableInlineWhispers", true};

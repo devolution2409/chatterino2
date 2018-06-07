@@ -16,9 +16,6 @@ class HighlightingPage : public SettingsPage
 {
 public:
     HighlightingPage();
-
-private:
-    QTimer disabledUsersChangedTimer;
 };
 
 }  // namespace settingspages

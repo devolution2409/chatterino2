@@ -67,18 +67,20 @@ HighlightingPage::HighlightingPage()
             {
                 auto text = disabledUsers.emplace<QTextEdit>().getElement();
 
-                QObject::connect(text, &QTextEdit::textChanged, this,
-                                 [this] { this->disabledUsersChangedTimer.start(200); });
+                QObject::connect(text, &QTextEdit::textChanged, this, [text, app] {
+                    QStringList list = text->toPlainText().split("\n", QString::SkipEmptyParts);
+                    list.removeDuplicates();
+                    app->settings->highlightUserBlacklist = list.join("\n") + "\n";
+                });
+            }
+            auto pingUsers = tabs.appendTab(new QVBoxLayout, "Ping on message");
+            {
+                auto text = pingUsers.emplace<QTextEdit>().getElement();
 
-                QObject::connect(
-                    &this->disabledUsersChangedTimer, &QTimer::timeout, this, [text, app]() {
-                        QStringList list = text->toPlainText().split("\n", QString::SkipEmptyParts);
-                        list.removeDuplicates();
-                        app->settings->highlightUserBlacklist = list.join("\n") + "\n";
-                    });
-
-                app->settings->highlightUserBlacklist.connect([=](const QString &str, auto) {
-                    text->setPlainText(str);  //
+                QObject::connect(text, &QTextEdit::textChanged, this, [text, app] {
+                    QStringList list = text->toPlainText().split("\n", QString::SkipEmptyParts);
+                    list.removeDuplicates();
+                    app->settings->pingUserslist = list.join("\n") + "\n";
                 });
             }
         }
@@ -98,9 +100,6 @@ HighlightingPage::HighlightingPage()
 
         layout.append(createCheckBox(ALWAYS_PLAY, app->settings->highlightAlwaysPlaySound));
     }
-
-    // ---- misc
-    this->disabledUsersChangedTimer.setSingleShot(true);
 }
 
 }  // namespace settingspages
