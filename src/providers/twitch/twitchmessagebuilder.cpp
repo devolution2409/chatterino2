@@ -218,6 +218,9 @@ MessagePtr TwitchMessageBuilder::build()
                 if (linkString.isEmpty()) {
                     link = Link();
                 } else {
+                    if (app->settings->lowercaseLinks) {
+                        string = string.toLower();
+                    }
                     link = Link(Link::Url, linkString);
                     textColor = MessageColor(MessageColor::Link);
                 }

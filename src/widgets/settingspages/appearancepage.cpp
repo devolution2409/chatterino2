@@ -25,6 +25,8 @@
 
 #define LAST_MSG "Mark the last message you read (dotted line)"
 
+#define LOWER_LINK "Display all links as lowercase"
+
 // clang-format off
 #define TIMESTAMP_FORMATS "hh:mm a", "h:mm a", "hh:mm:ss a", "h:mm:ss a", "HH:mm", "H:mm", "HH:mm:ss", "H:mm:ss"
 // clang-format on
@@ -104,6 +106,8 @@ AppearancePage::AppearancePage()
                                              app->settings->showMessageLength));
 
         messages.append(this->createCheckBox(LAST_MSG, app->settings->showLastMessageIndicator));
+
+        messages.append(this->createCheckBox(LOWER_LINK, app->settings->lowercaseLinks));
     }
 
     auto emotes = layout.emplace<QGroupBox>("Emotes").setLayoutType<QVBoxLayout>();
