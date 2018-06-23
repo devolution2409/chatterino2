@@ -56,7 +56,6 @@ public:
     virtual void addRecentChatter(const std::shared_ptr<messages::Message> &message);
 
     QString name;
-    QStringList modList;
 
     virtual bool canSendMessage() const;
     virtual void sendMessage(const QString &message);

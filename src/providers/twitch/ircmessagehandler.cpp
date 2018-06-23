@@ -281,47 +281,34 @@ void IrcMessageHandler::handleUserNoticeMessage(Communi::IrcMessage *message, Tw
 
 void IrcMessageHandler::handleModeMessage(Communi::IrcMessage *message)
 {
-    auto app = getApp();
-
-    auto channel = app->twitch.server->getChannelOrEmpty(message->parameter(0).remove(0, 1));
-
-    if (channel->isEmpty()) {
-        return;
-    }
-
-    if (message->parameter(1) == "+o") {
-        channel->modList.append(message->parameter(2));
-    } else if (message->parameter(1) == "-o") {
-        channel->modList.append(message->parameter(2));
-    }
+    return;
 }
 
 void IrcMessageHandler::handleNoticeMessage(Communi::IrcNoticeMessage *message)
 {
-    return;
-    //    auto app = getApp();
-    //    MessagePtr msg = Message::createSystemMessage(message->content());
+    auto app = getApp();
 
-    //    QString channelName;
-    //    if (!TrimChannelName(message->target(), channelName)) {
-    //        // Notice wasn't targeted at a single channel, send to all twitch channels
-    //        app->twitch.server->forEachChannelAndSpecialChannels([msg](const auto &c) {
-    //            c->addMessage(msg);  //
-    //        });
+    QString channelName = message->parameter(0).remove(0, 1);
+    MessagePtr msg = Message::createSystemMessage(message->content());
 
-    //        return;
-    //    }
+    if (message->target() != channelName) {
+        // Notice wasn't targeted at a single channel, send to all twitch channels
+        app->twitch.server->forEachChannelAndSpecialChannels([msg](const auto &c) {
+            c->addMessage(msg);  //
+        });
 
-    //    auto channel = app->twitch.server->getChannelOrEmpty(channelName);
+        return;
+    }
 
-    //    if (channel->isEmpty()) {
-    //        debug::Log("[IrcManager:handleNoticeMessage] Channel {} not found in channel
-    //        manager",
-    //                   channelName);
-    //        return;
-    //    }
+    auto channel = app->twitch.server->getChannelOrEmpty(channelName);
 
-    //    channel->addMessage(msg);
+    if (channel->isEmpty()) {
+        debug::Log("[IrcManager:handleNoticeMessage] Channel {} not found in channel manager",
+                   channelName);
+        return;
+    }
+
+    channel->addMessage(msg);
 }
 
 void IrcMessageHandler::handleWriteConnectionNoticeMessage(Communi::IrcNoticeMessage *message)
